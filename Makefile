@@ -10,7 +10,7 @@ installdependencies:
 	@cat dependencies.txt | xargs go get
 
 tests: installdependencies
-	@for pkg in $(SUBPACKAGES); do cd $$pkg && go test -i && go test ; cd -;done
+	@for pkg in $(SUBPACKAGES); do cd $$pkg && go test -v -i && go test -v; cd -;done
 
 clean:
 	find . -type 'f' -name '*.test' -print | xargs rm -f

@@ -2,10 +2,12 @@ package rfc3164
 
 import (
 	"bytes"
-	"github.com/jeromer/syslogparser"
-	. "launchpad.net/gocheck"
 	"testing"
 	"time"
+
+	"github.com/jeromer/syslogparser"
+
+	. "launchpad.net/gocheck"
 )
 
 // Hooks up gocheck into the gotest runner.

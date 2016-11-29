@@ -1,11 +1,12 @@
 package rfc3164_test
 
 import (
-	"fmt"
+	"testing"
+
 	"github.com/jeromer/syslogparser/rfc3164"
 )
 
-func ExampleNewParser() {
+func TestExampleNewParser(t *testing.T) {
 	b := "<34>Oct 11 22:14:15 mymachine su: 'su root' failed for lonvick on /dev/pts/8"
 	buff := []byte(b)
 
@@ -15,5 +16,5 @@ func ExampleNewParser() {
 		panic(err)
 	}
 
-	fmt.Println(p.Dump())
+	t.Log(p.Dump())
 }
