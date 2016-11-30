@@ -1,19 +1,18 @@
 package syslogparser
 
 import (
-	"fmt"
 	"strconv"
-	"strings"
 	"time"
 )
 
+// Constants
 const (
-	PRI_PART_START = '<'
-	PRI_PART_END   = '>'
-
-	NO_VERSION = -1
+	pRiPartStart = '<'
+	pRiPartEnd   = '>'
+	NoVersion    = -1
 )
 
+// Err constants
 var (
 	ErrEOL     = &ParserError{"End of log line"}
 	ErrNoSpace = &ParserError{"No space found"}
@@ -30,33 +29,39 @@ var (
 	ErrTimestampUnknownFormat = &ParserError{"Timestamp format unknown"}
 )
 
+// LogParser ...
 type LogParser interface {
 	Parse() error
 	Dump() LogParts
 	Location(*time.Location)
 }
 
+// ParserError ...
 type ParserError struct {
 	ErrorString string
 }
 
+// Priority ...
 type Priority struct {
 	P int
 	F Facility
 	S Severity
 }
 
+// Facility ...
 type Facility struct {
 	Value int
 }
 
+// Severity ...
 type Severity struct {
 	Value int
 }
 
+// LogParts ...
 type LogParts map[string]interface{}
 
-// https://tools.ietf.org/html/rfc3164#section-4.1
+// ParsePriority per https://tools.ietf.org/html/rfc3164#section-4.1
 func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 	pri := newPriority(0)
 
@@ -64,7 +69,7 @@ func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 		return pri, ErrPriorityEmpty
 	}
 
-	if buff[*cursor] != PRI_PART_START {
+	if buff[*cursor] != pRiPartStart {
 		return pri, ErrPriorityNoStart
 	}
 
@@ -78,7 +83,7 @@ func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 
 		c := buff[i]
 
-		if c == PRI_PART_END {
+		if c == pRiPartEnd {
 			if i == 1 {
 				return pri, ErrPriorityTooShort
 			}
@@ -104,10 +109,10 @@ func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 	return pri, ErrPriorityNoEnd
 }
 
-// https://tools.ietf.org/html/rfc5424#section-6.2.2
+// ParseVersion per https://tools.ietf.org/html/rfc5424#section-6.2.2
 func ParseVersion(buff []byte, cursor *int, l int) (int, error) {
 	if *cursor >= l {
-		return NO_VERSION, ErrVersionNotFound
+		return NoVersion, ErrVersionNotFound
 	}
 
 	c := buff[*cursor]
@@ -115,18 +120,19 @@ func ParseVersion(buff []byte, cursor *int, l int) (int, error) {
 
 	// XXX : not a version, not an error though as RFC 3164 does not support it
 	if !IsDigit(c) {
-		return NO_VERSION, nil
+		return NoVersion, nil
 	}
 
 	v, e := strconv.Atoi(string(c))
 	if e != nil {
 		*cursor--
-		return NO_VERSION, e
+		return NoVersion, e
 	}
 
 	return v, nil
 }
 
+// IsDigit ...
 func IsDigit(c byte) bool {
 	return c >= '0' && c <= '9'
 }
@@ -142,6 +148,7 @@ func newPriority(p int) Priority {
 	}
 }
 
+// FindNextSpace ...
 func FindNextSpace(buff []byte, from int, l int) (int, error) {
 	var to int
 
@@ -155,6 +162,7 @@ func FindNextSpace(buff []byte, from int, l int) (int, error) {
 	return 0, ErrNoSpace
 }
 
+// Parse2Digits ...
 func Parse2Digits(buff []byte, cursor *int, l int, min int, max int, e error) (int, error) {
 	digitLen := 2
 
@@ -178,6 +186,7 @@ func Parse2Digits(buff []byte, cursor *int, l int, min int, max int, e error) (i
 	return 0, e
 }
 
+// ParseHostname ...
 func ParseHostname(buff []byte, cursor *int, l int) (string, error) {
 	from := *cursor
 	var to int
@@ -193,12 +202,6 @@ func ParseHostname(buff []byte, cursor *int, l int) (string, error) {
 	*cursor = to
 
 	return string(hostname), nil
-}
-
-func ShowCursorPos(buff []byte, cursor int) {
-	fmt.Println(string(buff))
-	padding := strings.Repeat("-", cursor)
-	fmt.Println(padding + "↑\n")
 }
 
 func (err *ParserError) Error() string {

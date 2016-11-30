@@ -7,6 +7,7 @@ import (
 	"github.com/bruceadowns/syslogparser"
 )
 
+// Parser structure
 type Parser struct {
 	buff     []byte
 	cursor   int
@@ -29,6 +30,7 @@ type rfc3164message struct {
 	content string
 }
 
+// NewParser ...
 func NewParser(buff []byte) *Parser {
 	return &Parser{
 		buff:     buff,
@@ -38,14 +40,17 @@ func NewParser(buff []byte) *Parser {
 	}
 }
 
+// Location ...
 func (p *Parser) Location(location *time.Location) {
 	p.location = location
 }
 
+// Hostname ...
 func (p *Parser) Hostname(hostname string) {
 	p.hostname = hostname
 }
 
+// Parse ...
 func (p *Parser) Parse() error {
 	pri, err := p.parsePriority()
 	if err != nil {
@@ -67,13 +72,14 @@ func (p *Parser) Parse() error {
 	}
 
 	p.priority = pri
-	p.version = syslogparser.NO_VERSION
+	p.version = syslogparser.NoVersion
 	p.header = hdr
 	p.message = msg
 
 	return nil
 }
 
+// Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
 		"timestamp": p.header.timestamp,
@@ -184,9 +190,9 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 func (p *Parser) parseHostname() (string, error) {
 	if p.hostname != "" {
 		return p.hostname, nil
-	} else {
-		return syslogparser.ParseHostname(p.buff, &p.cursor, p.l)
 	}
+
+	return syslogparser.ParseHostname(p.buff, &p.cursor, p.l)
 }
 
 // http://tools.ietf.org/html/rfc3164#section-4.1.3

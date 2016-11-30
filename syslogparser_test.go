@@ -86,14 +86,14 @@ func (s *CommonTestSuite) TestParseVersion_NotFound(c *C) {
 	buff := []byte("<123>")
 	start := 5
 
-	s.assertVersion(c, NO_VERSION, buff, start, start, ErrVersionNotFound)
+	s.assertVersion(c, NoVersion, buff, start, start, ErrVersionNotFound)
 }
 
 func (s *CommonTestSuite) TestParseVersion_NonDigit(c *C) {
 	buff := []byte("<123>a")
 	start := 5
 
-	s.assertVersion(c, NO_VERSION, buff, start, start+1, nil)
+	s.assertVersion(c, NoVersion, buff, start, start+1, nil)
 }
 
 func (s *CommonTestSuite) TestParseVersion_Ok(c *C) {

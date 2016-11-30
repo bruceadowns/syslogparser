@@ -115,24 +115,24 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 	tsString := "2003-10-11T22:14:15.003Z"
 	hostname := "mymachine.example.com"
 	appName := "su"
-	procId := "123"
-	msgId := "ID47"
+	procID := "123"
+	msgID := "ID47"
 	nilValue := string(NILVALUE)
 	headerFmt := "<165>1 %s %s %s %s %s "
 
 	fixtures := []string{
 		// HEADER complete
-		fmt.Sprintf(headerFmt, tsString, hostname, appName, procId, msgId),
+		fmt.Sprintf(headerFmt, tsString, hostname, appName, procID, msgID),
 		// TIMESTAMP as NILVALUE
-		fmt.Sprintf(headerFmt, nilValue, hostname, appName, procId, msgId),
+		fmt.Sprintf(headerFmt, nilValue, hostname, appName, procID, msgID),
 		// HOSTNAME as NILVALUE
-		fmt.Sprintf(headerFmt, tsString, nilValue, appName, procId, msgId),
+		fmt.Sprintf(headerFmt, tsString, nilValue, appName, procID, msgID),
 		// APP-NAME as NILVALUE
-		fmt.Sprintf(headerFmt, tsString, hostname, nilValue, procId, msgId),
+		fmt.Sprintf(headerFmt, tsString, hostname, nilValue, procID, msgID),
 		// PROCID as NILVALUE
-		fmt.Sprintf(headerFmt, tsString, hostname, appName, nilValue, msgId),
+		fmt.Sprintf(headerFmt, tsString, hostname, appName, nilValue, msgID),
 		// MSGID as NILVALUE
-		fmt.Sprintf(headerFmt, tsString, hostname, appName, procId, nilValue),
+		fmt.Sprintf(headerFmt, tsString, hostname, appName, procID, nilValue),
 	}
 
 	pri := syslogparser.Priority{
@@ -149,8 +149,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: ts,
 			hostname:  hostname,
 			appName:   appName,
-			procId:    procId,
-			msgId:     msgId,
+			procID:    procID,
+			msgID:     msgID,
 		},
 		// TIMESTAMP as NILVALUE
 		header{
@@ -159,8 +159,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: *new(time.Time),
 			hostname:  hostname,
 			appName:   appName,
-			procId:    procId,
-			msgId:     msgId,
+			procID:    procID,
+			msgID:     msgID,
 		},
 		// HOSTNAME as NILVALUE
 		header{
@@ -169,8 +169,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: ts,
 			hostname:  nilValue,
 			appName:   appName,
-			procId:    procId,
-			msgId:     msgId,
+			procID:    procID,
+			msgID:     msgID,
 		},
 		// APP-NAME as NILVALUE
 		header{
@@ -179,8 +179,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: ts,
 			hostname:  hostname,
 			appName:   nilValue,
-			procId:    procId,
-			msgId:     msgId,
+			procID:    procID,
+			msgID:     msgID,
 		},
 		// PROCID as NILVALUE
 		header{
@@ -189,8 +189,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: ts,
 			hostname:  hostname,
 			appName:   appName,
-			procId:    nilValue,
-			msgId:     msgId,
+			procID:    nilValue,
+			msgID:     msgID,
 		},
 		// MSGID as NILVALUE
 		header{
@@ -199,8 +199,8 @@ func (s *Rfc5424TestSuite) TestParseHeader_Valid(c *C) {
 			timestamp: ts,
 			hostname:  hostname,
 			appName:   appName,
-			procId:    procId,
-			msgId:     nilValue,
+			procID:    procID,
+			msgID:     nilValue,
 		},
 	}
 
@@ -649,32 +649,32 @@ func (s *Rfc5424TestSuite) TestParseAppName_TooLong(c *C) {
 
 func (s *Rfc5424TestSuite) TestParseProcId_Valid(c *C) {
 	buff := []byte("123foo ")
-	procId := "123foo"
+	procID := "123foo"
 
-	s.assertParseProcId(c, procId, buff, 6, nil)
+	s.assertParseProcID(c, procID, buff, 6, nil)
 }
 
 func (s *Rfc5424TestSuite) TestParseProcId_TooLong(c *C) {
 	// > 128chars
 	buff := []byte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab ")
-	procId := ""
+	procID := ""
 
-	s.assertParseProcId(c, procId, buff, 128, ErrInvalidProcId)
+	s.assertParseProcID(c, procID, buff, 128, ErrInvalidProcID)
 }
 
 func (s *Rfc5424TestSuite) TestParseMsgId_Valid(c *C) {
 	buff := []byte("123foo ")
-	procId := "123foo"
+	procID := "123foo"
 
-	s.assertParseMsgId(c, procId, buff, 6, nil)
+	s.assertParseMsgID(c, procID, buff, 6, nil)
 }
 
 func (s *Rfc5424TestSuite) TestParseMsgId_TooLong(c *C) {
 	// > 32chars
 	buff := []byte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ")
-	procId := ""
+	procID := ""
 
-	s.assertParseMsgId(c, procId, buff, 32, ErrInvalidMsgId)
+	s.assertParseMsgID(c, procID, buff, 32, ErrInvalidMsgID)
 }
 
 func (s *Rfc5424TestSuite) TestParseStructuredData_NilValue(c *C) {
@@ -831,21 +831,21 @@ func (s *Rfc5424TestSuite) assertParseAppName(c *C, appName string, b []byte, ex
 	c.Assert(p.cursor, Equals, expC)
 }
 
-func (s *Rfc5424TestSuite) assertParseProcId(c *C, procId string, b []byte, expC int, e error) {
+func (s *Rfc5424TestSuite) assertParseProcID(c *C, procID string, b []byte, expC int, e error) {
 	p := NewParser(b)
-	obtained, err := p.parseProcId()
+	obtained, err := p.parseProcID()
 
 	c.Assert(err, Equals, e)
-	c.Assert(obtained, Equals, procId)
+	c.Assert(obtained, Equals, procID)
 	c.Assert(p.cursor, Equals, expC)
 }
 
-func (s *Rfc5424TestSuite) assertParseMsgId(c *C, msgId string, b []byte, expC int, e error) {
+func (s *Rfc5424TestSuite) assertParseMsgID(c *C, msgID string, b []byte, expC int, e error) {
 	p := NewParser(b)
-	obtained, err := p.parseMsgId()
+	obtained, err := p.parseMsgID()
 
 	c.Assert(err, Equals, e)
-	c.Assert(obtained, Equals, msgId)
+	c.Assert(obtained, Equals, msgID)
 	c.Assert(p.cursor, Equals, expC)
 }
 

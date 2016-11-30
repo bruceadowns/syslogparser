@@ -9,10 +9,12 @@ import (
 	"github.com/bruceadowns/syslogparser"
 )
 
+// Constants
 const (
 	NILVALUE = '-'
 )
 
+// Err constants
 var (
 	ErrYearInvalid       = &syslogparser.ParserError{"Invalid year in timestamp"}
 	ErrMonthInvalid      = &syslogparser.ParserError{"Invalid month in timestamp"}
@@ -24,11 +26,12 @@ var (
 	ErrTimeZoneInvalid   = &syslogparser.ParserError{"Invalid time zone in timestamp"}
 	ErrInvalidTimeFormat = &syslogparser.ParserError{"Invalid time format"}
 	ErrInvalidAppName    = &syslogparser.ParserError{"Invalid app name"}
-	ErrInvalidProcId     = &syslogparser.ParserError{"Invalid proc ID"}
-	ErrInvalidMsgId      = &syslogparser.ParserError{"Invalid msg ID"}
+	ErrInvalidProcID     = &syslogparser.ParserError{"Invalid proc ID"}
+	ErrInvalidMsgID      = &syslogparser.ParserError{"Invalid msg ID"}
 	ErrNoStructuredData  = &syslogparser.ParserError{"No structured data"}
 )
 
+// Parser struct
 type Parser struct {
 	buff           []byte
 	cursor         int
@@ -44,8 +47,8 @@ type header struct {
 	timestamp time.Time
 	hostname  string
 	appName   string
-	procId    string
-	msgId     string
+	procID    string
+	msgID     string
 }
 
 type partialTime struct {
@@ -66,6 +69,7 @@ type fullDate struct {
 	day   int
 }
 
+// NewParser ...
 func NewParser(buff []byte) *Parser {
 	return &Parser{
 		buff:   buff,
@@ -74,10 +78,12 @@ func NewParser(buff []byte) *Parser {
 	}
 }
 
+// Location ...
 func (p *Parser) Location(location *time.Location) {
 	// Ignore as RFC5424 syslog always has a timezone
 }
 
+// Parse ...
 func (p *Parser) Parse() error {
 	hdr, err := p.parseHeader()
 	if err != nil {
@@ -101,6 +107,7 @@ func (p *Parser) Parse() error {
 	return nil
 }
 
+// Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
 		"priority":        p.header.priority.P,
@@ -110,8 +117,8 @@ func (p *Parser) Dump() syslogparser.LogParts {
 		"timestamp":       p.header.timestamp,
 		"hostname":        p.header.hostname,
 		"app_name":        p.header.appName,
-		"proc_id":         p.header.procId,
-		"msg_id":          p.header.msgId,
+		"proc_id":         p.header.procID,
+		"msg_id":          p.header.msgID,
 		"structured_data": p.structuredData,
 		"message":         p.message,
 	}
@@ -159,20 +166,20 @@ func (p *Parser) parseHeader() (header, error) {
 	hdr.appName = appName
 	p.cursor++
 
-	procId, err := p.parseProcId()
+	procID, err := p.parseProcID()
 	if err != nil {
 		return hdr, nil
 	}
 
-	hdr.procId = procId
+	hdr.procID = procID
 	p.cursor++
 
-	msgId, err := p.parseMsgId()
+	msgID, err := p.parseMsgID()
 	if err != nil {
 		return hdr, nil
 	}
 
-	hdr.msgId = msgId
+	hdr.msgID = msgID
 	p.cursor++
 
 	return hdr, nil
@@ -241,13 +248,13 @@ func (p *Parser) parseAppName() (string, error) {
 }
 
 // PROCID = NILVALUE / 1*128PRINTUSASCII
-func (p *Parser) parseProcId() (string, error) {
-	return parseUpToLen(p.buff, &p.cursor, p.l, 128, ErrInvalidProcId)
+func (p *Parser) parseProcID() (string, error) {
+	return parseUpToLen(p.buff, &p.cursor, p.l, 128, ErrInvalidProcID)
 }
 
 // MSGID = NILVALUE / 1*32PRINTUSASCII
-func (p *Parser) parseMsgId() (string, error) {
-	return parseUpToLen(p.buff, &p.cursor, p.l, 32, ErrInvalidMsgId)
+func (p *Parser) parseMsgID() (string, error) {
+	return parseUpToLen(p.buff, &p.cursor, p.l, 32, ErrInvalidMsgID)
 }
 
 func (p *Parser) parseStructuredData() (string, error) {
