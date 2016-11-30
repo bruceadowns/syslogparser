@@ -3,7 +3,7 @@ package rfc3164_test
 import (
 	"testing"
 
-	"github.com/jeromer/syslogparser/rfc3164"
+	"github.com/bruceadowns/syslogparser/rfc3164"
 )
 
 func TestExampleNewParser(t *testing.T) {

@@ -3,7 +3,7 @@ package rfc5424_test
 import (
 	"testing"
 
-	"github.com/jeromer/syslogparser/rfc5424"
+	"github.com/bruceadowns/syslogparser/rfc5424"
 )
 
 func TestExampleNewParser(t *testing.T) {

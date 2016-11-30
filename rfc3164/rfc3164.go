@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"time"
 
-	"github.com/jeromer/syslogparser"
+	"github.com/bruceadowns/syslogparser"
 )
 
 type Parser struct {

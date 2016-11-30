@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jeromer/syslogparser"
+	"github.com/bruceadowns/syslogparser"
 
 	. "launchpad.net/gocheck"
 )
