@@ -7,25 +7,22 @@ import (
 
 // Constants
 const (
-	pRiPartStart = '<'
-	pRiPartEnd   = '>'
+	priPartStart = '<'
+	priPartEnd   = '>'
 	NoVersion    = -1
 )
 
 // Err constants
 var (
-	ErrEOL     = &ParserError{"End of log line"}
-	ErrNoSpace = &ParserError{"No space found"}
-
-	ErrPriorityNoStart  = &ParserError{"No start char found for priority"}
-	ErrPriorityEmpty    = &ParserError{"Priority field empty"}
-	ErrPriorityNoEnd    = &ParserError{"No end char found for priority"}
-	ErrPriorityTooShort = &ParserError{"Priority field too short"}
-	ErrPriorityTooLong  = &ParserError{"Priority field too long"}
-	ErrPriorityNonDigit = &ParserError{"Non digit found in priority"}
-
-	ErrVersionNotFound = &ParserError{"Can not find version"}
-
+	ErrEOL                    = &ParserError{"End of log line"}
+	ErrNoSpace                = &ParserError{"No space found"}
+	ErrPriorityNoStart        = &ParserError{"No start char found for priority"}
+	ErrPriorityEmpty          = &ParserError{"Priority field empty"}
+	ErrPriorityNoEnd          = &ParserError{"No end char found for priority"}
+	ErrPriorityTooShort       = &ParserError{"Priority field too short"}
+	ErrPriorityTooLong        = &ParserError{"Priority field too long"}
+	ErrPriorityNonDigit       = &ParserError{"Non digit found in priority"}
+	ErrVersionNotFound        = &ParserError{"Cannot find version"}
 	ErrTimestampUnknownFormat = &ParserError{"Timestamp format unknown"}
 )
 
@@ -69,7 +66,7 @@ func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 		return pri, ErrPriorityEmpty
 	}
 
-	if buff[*cursor] != pRiPartStart {
+	if buff[*cursor] != priPartStart {
 		return pri, ErrPriorityNoStart
 	}
 
@@ -83,7 +80,7 @@ func ParsePriority(buff []byte, cursor *int, l int) (Priority, error) {
 
 		c := buff[i]
 
-		if c == pRiPartEnd {
+		if c == priPartEnd {
 			if i == 1 {
 				return pri, ErrPriorityTooShort
 			}

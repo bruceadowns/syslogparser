@@ -1,6 +1,7 @@
 SUBPACKAGES=. rfc3164 rfc5424
+
 help:
-	@echo "Available targets:"
+	@echo "Available targets"
 	@echo "- tests: run tests"
 	@echo "- installdependencies: installs dependencies declared in dependencies.txt"
 	@echo "- benchmarks: run benchmarks"
