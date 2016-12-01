@@ -717,7 +717,7 @@ func (s *Rfc5424TestSuite) BenchmarkParseTimestamp(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseTimestamp()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
@@ -732,7 +732,7 @@ func (s *Rfc5424TestSuite) BenchmarkParseHeader(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseHeader()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0

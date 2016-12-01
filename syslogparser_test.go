@@ -132,7 +132,7 @@ func (s *CommonTestSuite) BenchmarkParsePriority(c *C) {
 		start = 0
 		_, err := ParsePriority(buff, &start, l)
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 	}
 }
@@ -146,7 +146,7 @@ func (s *CommonTestSuite) BenchmarkParseVersion(c *C) {
 		start = 0
 		_, err := ParseVersion(buff, &start, l)
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 	}
 }

@@ -13,7 +13,7 @@ func TestExampleNewParser(t *testing.T) {
 	p := rfc5424.NewParser(buff)
 	err := p.Parse()
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	t.Log(p.Dump())

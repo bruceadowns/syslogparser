@@ -190,7 +190,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseTimestamp(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseTimestamp()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
@@ -205,7 +205,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseHostname(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseHostname()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
@@ -220,7 +220,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseTag(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseTag()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
@@ -235,7 +235,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseHeader(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parseHeader()
 		if err != nil {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
@@ -250,7 +250,7 @@ func (s *Rfc3164TestSuite) BenchmarkParsemessage(c *C) {
 	for i := 0; i < c.N; i++ {
 		_, err := p.parsemessage()
 		if err != syslogparser.ErrEOL {
-			panic(err)
+			c.Fatal(err)
 		}
 
 		p.cursor = 0
