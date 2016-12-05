@@ -282,7 +282,7 @@ func (s *Rfc5424TestSuite) TestParseYear_Invalid(c *C) {
 	buff := []byte("1a2b")
 	expected := 0
 
-	s.assertParseYear(c, expected, buff, 4, ErrYearInvalid)
+	s.assertParseYear(c, expected, buff, 4, syslogparser.ErrYearInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseYear_TooShort(c *C) {
@@ -303,20 +303,20 @@ func (s *Rfc5424TestSuite) TestParseMonth_InvalidString(c *C) {
 	buff := []byte("ab")
 	expected := 0
 
-	s.assertParseMonth(c, expected, buff, 2, ErrMonthInvalid)
+	s.assertParseMonth(c, expected, buff, 2, syslogparser.ErrMonthInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseMonth_InvalidRange(c *C) {
 	buff := []byte("00")
 	expected := 0
 
-	s.assertParseMonth(c, expected, buff, 2, ErrMonthInvalid)
+	s.assertParseMonth(c, expected, buff, 2, syslogparser.ErrMonthInvalid)
 
 	// ----
 
 	buff = []byte("13")
 
-	s.assertParseMonth(c, expected, buff, 2, ErrMonthInvalid)
+	s.assertParseMonth(c, expected, buff, 2, syslogparser.ErrMonthInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseMonth_TooShort(c *C) {
@@ -337,7 +337,7 @@ func (s *Rfc5424TestSuite) TestParseDay_InvalidString(c *C) {
 	buff := []byte("ab")
 	expected := 0
 
-	s.assertParseDay(c, expected, buff, 2, ErrDayInvalid)
+	s.assertParseDay(c, expected, buff, 2, syslogparser.ErrDayInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseDay_TooShort(c *C) {
@@ -351,13 +351,13 @@ func (s *Rfc5424TestSuite) TestParseDay_InvalidRange(c *C) {
 	buff := []byte("00")
 	expected := 0
 
-	s.assertParseDay(c, expected, buff, 2, ErrDayInvalid)
+	s.assertParseDay(c, expected, buff, 2, syslogparser.ErrDayInvalid)
 
 	// ----
 
 	buff = []byte("32")
 
-	s.assertParseDay(c, expected, buff, 2, ErrDayInvalid)
+	s.assertParseDay(c, expected, buff, 2, syslogparser.ErrDayInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseDay_Valid(c *C) {
@@ -394,7 +394,7 @@ func (s *Rfc5424TestSuite) TestParseHour_InvalidString(c *C) {
 	buff := []byte("azer")
 	expected := 0
 
-	s.assertParseHour(c, expected, buff, 2, ErrHourInvalid)
+	s.assertParseHour(c, expected, buff, 2, syslogparser.ErrHourInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseHour_TooShort(c *C) {
@@ -408,13 +408,13 @@ func (s *Rfc5424TestSuite) TestParseHour_InvalidRange(c *C) {
 	buff := []byte("-1")
 	expected := 0
 
-	s.assertParseHour(c, expected, buff, 2, ErrHourInvalid)
+	s.assertParseHour(c, expected, buff, 2, syslogparser.ErrHourInvalid)
 
 	// ----
 
 	buff = []byte("24")
 
-	s.assertParseHour(c, expected, buff, 2, ErrHourInvalid)
+	s.assertParseHour(c, expected, buff, 2, syslogparser.ErrHourInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseHour_Valid(c *C) {
@@ -428,7 +428,7 @@ func (s *Rfc5424TestSuite) TestParseMinute_InvalidString(c *C) {
 	buff := []byte("azer")
 	expected := 0
 
-	s.assertParseMinute(c, expected, buff, 2, ErrMinuteInvalid)
+	s.assertParseMinute(c, expected, buff, 2, syslogparser.ErrMinuteInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseMinute_TooShort(c *C) {
@@ -442,13 +442,13 @@ func (s *Rfc5424TestSuite) TestParseMinute_InvalidRange(c *C) {
 	buff := []byte("-1")
 	expected := 0
 
-	s.assertParseMinute(c, expected, buff, 2, ErrMinuteInvalid)
+	s.assertParseMinute(c, expected, buff, 2, syslogparser.ErrMinuteInvalid)
 
 	// ----
 
 	buff = []byte("60")
 
-	s.assertParseMinute(c, expected, buff, 2, ErrMinuteInvalid)
+	s.assertParseMinute(c, expected, buff, 2, syslogparser.ErrMinuteInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseMinute_Valid(c *C) {
@@ -462,7 +462,7 @@ func (s *Rfc5424TestSuite) TestParseSecond_InvalidString(c *C) {
 	buff := []byte("azer")
 	expected := 0
 
-	s.assertParseSecond(c, expected, buff, 2, ErrSecondInvalid)
+	s.assertParseSecond(c, expected, buff, 2, syslogparser.ErrSecondInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseSecond_TooShort(c *C) {
@@ -476,13 +476,13 @@ func (s *Rfc5424TestSuite) TestParseSecond_InvalidRange(c *C) {
 	buff := []byte("-1")
 	expected := 0
 
-	s.assertParseSecond(c, expected, buff, 2, ErrSecondInvalid)
+	s.assertParseSecond(c, expected, buff, 2, syslogparser.ErrSecondInvalid)
 
 	// ----
 
 	buff = []byte("60")
 
-	s.assertParseSecond(c, expected, buff, 2, ErrSecondInvalid)
+	s.assertParseSecond(c, expected, buff, 2, syslogparser.ErrSecondInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseSecond_Valid(c *C) {
@@ -496,7 +496,7 @@ func (s *Rfc5424TestSuite) TestParseSecFrac_InvalidString(c *C) {
 	buff := []byte("azerty")
 	expected := 0.0
 
-	s.assertParseSecFrac(c, expected, buff, 0, ErrSecFracInvalid)
+	s.assertParseSecFrac(c, expected, buff, 0, syslogparser.ErrSecFracInvalid)
 }
 
 func (s *Rfc5424TestSuite) TestParseSecFrac_NanoSeconds(c *C) {
@@ -644,7 +644,7 @@ func (s *Rfc5424TestSuite) TestParseAppName_TooLong(c *C) {
 	buff := []byte("suuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ")
 	appName := ""
 
-	s.assertParseAppName(c, appName, buff, 48, ErrInvalidAppName)
+	s.assertParseAppName(c, appName, buff, 48, syslogparser.ErrInvalidAppName)
 }
 
 func (s *Rfc5424TestSuite) TestParseProcId_Valid(c *C) {
@@ -659,7 +659,7 @@ func (s *Rfc5424TestSuite) TestParseProcId_TooLong(c *C) {
 	buff := []byte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab ")
 	procID := ""
 
-	s.assertParseProcID(c, procID, buff, 128, ErrInvalidProcID)
+	s.assertParseProcID(c, procID, buff, 128, syslogparser.ErrInvalidProcID)
 }
 
 func (s *Rfc5424TestSuite) TestParseMsgId_Valid(c *C) {
@@ -674,7 +674,7 @@ func (s *Rfc5424TestSuite) TestParseMsgId_TooLong(c *C) {
 	buff := []byte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ")
 	procID := ""
 
-	s.assertParseMsgID(c, procID, buff, 32, ErrInvalidMsgID)
+	s.assertParseMsgID(c, procID, buff, 32, syslogparser.ErrInvalidMsgID)
 }
 
 func (s *Rfc5424TestSuite) TestParseStructuredData_NilValue(c *C) {

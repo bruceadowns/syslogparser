@@ -24,18 +24,35 @@ var (
 	ErrPriorityNonDigit       = &ParserError{"Non digit found in priority"}
 	ErrVersionNotFound        = &ParserError{"Cannot find version"}
 	ErrTimestampUnknownFormat = &ParserError{"Timestamp format unknown"}
+	ErrYearInvalid            = &ParserError{"Invalid year in timestamp"}
+	ErrMonthInvalid           = &ParserError{"Invalid month in timestamp"}
+	ErrDayInvalid             = &ParserError{"Invalid day in timestamp"}
+	ErrHourInvalid            = &ParserError{"Invalid hour in timestamp"}
+	ErrMinuteInvalid          = &ParserError{"Invalid minute in timestamp"}
+	ErrSecondInvalid          = &ParserError{"Invalid second in timestamp"}
+	ErrSecFracInvalid         = &ParserError{"Invalid fraction of second in timestamp"}
+	ErrTimeZoneInvalid        = &ParserError{"Invalid time zone in timestamp"}
+	ErrInvalidTimeFormat      = &ParserError{"Invalid time format"}
+	ErrInvalidAppName         = &ParserError{"Invalid app name"}
+	ErrInvalidProcID          = &ParserError{"Invalid proc ID"}
+	ErrInvalidMsgID           = &ParserError{"Invalid msg ID"}
+	ErrNoStructuredData       = &ParserError{"No structured data"}
 )
+
+// ParserError ...
+type ParserError struct {
+	ErrorString string
+}
+
+func (err *ParserError) Error() string {
+	return err.ErrorString
+}
 
 // LogParser ...
 type LogParser interface {
 	Parse() error
 	Dump() LogParts
 	Location(*time.Location)
-}
-
-// ParserError ...
-type ParserError struct {
-	ErrorString string
 }
 
 // Priority ...
@@ -199,8 +216,4 @@ func ParseHostname(buff []byte, cursor *int, l int) (string, error) {
 	*cursor = to
 
 	return string(hostname), nil
-}
-
-func (err *ParserError) Error() string {
-	return err.ErrorString
 }

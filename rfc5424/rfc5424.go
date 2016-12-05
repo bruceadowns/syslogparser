@@ -14,23 +14,6 @@ const (
 	NILVALUE = '-'
 )
 
-// Err constants
-var (
-	ErrYearInvalid       = &syslogparser.ParserError{"Invalid year in timestamp"}
-	ErrMonthInvalid      = &syslogparser.ParserError{"Invalid month in timestamp"}
-	ErrDayInvalid        = &syslogparser.ParserError{"Invalid day in timestamp"}
-	ErrHourInvalid       = &syslogparser.ParserError{"Invalid hour in timestamp"}
-	ErrMinuteInvalid     = &syslogparser.ParserError{"Invalid minute in timestamp"}
-	ErrSecondInvalid     = &syslogparser.ParserError{"Invalid second in timestamp"}
-	ErrSecFracInvalid    = &syslogparser.ParserError{"Invalid fraction of second in timestamp"}
-	ErrTimeZoneInvalid   = &syslogparser.ParserError{"Invalid time zone in timestamp"}
-	ErrInvalidTimeFormat = &syslogparser.ParserError{"Invalid time format"}
-	ErrInvalidAppName    = &syslogparser.ParserError{"Invalid app name"}
-	ErrInvalidProcID     = &syslogparser.ParserError{"Invalid proc ID"}
-	ErrInvalidMsgID      = &syslogparser.ParserError{"Invalid msg ID"}
-	ErrNoStructuredData  = &syslogparser.ParserError{"No structured data"}
-)
-
 // Parser struct
 type Parser struct {
 	buff           []byte
@@ -208,7 +191,7 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 	}
 
 	if p.buff[p.cursor] != 'T' {
-		return ts, ErrInvalidTimeFormat
+		return ts, syslogparser.ErrInvalidTimeFormat
 	}
 
 	p.cursor++
@@ -244,17 +227,17 @@ func (p *Parser) parseHostname() (string, error) {
 
 // APP-NAME = NILVALUE / 1*48PRINTUSASCII
 func (p *Parser) parseAppName() (string, error) {
-	return parseUpToLen(p.buff, &p.cursor, p.l, 48, ErrInvalidAppName)
+	return parseUpToLen(p.buff, &p.cursor, p.l, 48, syslogparser.ErrInvalidAppName)
 }
 
 // PROCID = NILVALUE / 1*128PRINTUSASCII
 func (p *Parser) parseProcID() (string, error) {
-	return parseUpToLen(p.buff, &p.cursor, p.l, 128, ErrInvalidProcID)
+	return parseUpToLen(p.buff, &p.cursor, p.l, 128, syslogparser.ErrInvalidProcID)
 }
 
 // MSGID = NILVALUE / 1*32PRINTUSASCII
 func (p *Parser) parseMsgID() (string, error) {
-	return parseUpToLen(p.buff, &p.cursor, p.l, 32, ErrInvalidMsgID)
+	return parseUpToLen(p.buff, &p.cursor, p.l, 32, syslogparser.ErrInvalidMsgID)
 }
 
 func (p *Parser) parseStructuredData() (string, error) {
@@ -323,7 +306,7 @@ func parseYear(buff []byte, cursor *int, l int) (int, error) {
 
 	year, err := strconv.Atoi(sub)
 	if err != nil {
-		return 0, ErrYearInvalid
+		return 0, syslogparser.ErrYearInvalid
 	}
 
 	return year, nil
@@ -331,7 +314,7 @@ func parseYear(buff []byte, cursor *int, l int) (int, error) {
 
 // DATE-MONTH = 2DIGIT  ; 01-12
 func parseMonth(buff []byte, cursor *int, l int) (int, error) {
-	return syslogparser.Parse2Digits(buff, cursor, l, 1, 12, ErrMonthInvalid)
+	return syslogparser.Parse2Digits(buff, cursor, l, 1, 12, syslogparser.ErrMonthInvalid)
 }
 
 // DATE-MDAY = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
@@ -340,7 +323,7 @@ func parseDay(buff []byte, cursor *int, l int) (int, error) {
 	// XXX : we do not check if valid regarding February or leap years
 	// XXX : we only checks that day is in range [01 -> 31]
 	// XXX : in other words this function will not rant if you provide Feb 31th
-	return syslogparser.Parse2Digits(buff, cursor, l, 1, 31, ErrDayInvalid)
+	return syslogparser.Parse2Digits(buff, cursor, l, 1, 31, syslogparser.ErrDayInvalid)
 }
 
 // FULL-TIME = PARTIAL-TIME TIME-OFFSET
@@ -376,7 +359,7 @@ func parsePartialTime(buff []byte, cursor *int, l int) (partialTime, error) {
 	}
 
 	if buff[*cursor] != ':' {
-		return pt, ErrInvalidTimeFormat
+		return pt, syslogparser.ErrInvalidTimeFormat
 	}
 
 	*cursor++
@@ -413,17 +396,17 @@ func parsePartialTime(buff []byte, cursor *int, l int) (partialTime, error) {
 
 // TIME-HOUR = 2DIGIT  ; 00-23
 func parseHour(buff []byte, cursor *int, l int) (int, error) {
-	return syslogparser.Parse2Digits(buff, cursor, l, 0, 23, ErrHourInvalid)
+	return syslogparser.Parse2Digits(buff, cursor, l, 0, 23, syslogparser.ErrHourInvalid)
 }
 
 // TIME-MINUTE = 2DIGIT  ; 00-59
 func parseMinute(buff []byte, cursor *int, l int) (int, error) {
-	return syslogparser.Parse2Digits(buff, cursor, l, 0, 59, ErrMinuteInvalid)
+	return syslogparser.Parse2Digits(buff, cursor, l, 0, 59, syslogparser.ErrMinuteInvalid)
 }
 
 // TIME-SECOND = 2DIGIT  ; 00-59
 func parseSecond(buff []byte, cursor *int, l int) (int, error) {
-	return syslogparser.Parse2Digits(buff, cursor, l, 0, 59, ErrSecondInvalid)
+	return syslogparser.Parse2Digits(buff, cursor, l, 0, 59, syslogparser.ErrSecondInvalid)
 }
 
 // TIME-SECFRAC = "." 1*6DIGIT
@@ -447,13 +430,13 @@ func parseSecFrac(buff []byte, cursor *int, l int) (float64, error) {
 
 	sub := string(buff[from:to])
 	if len(sub) == 0 {
-		return 0, ErrSecFracInvalid
+		return 0, syslogparser.ErrSecFracInvalid
 	}
 
 	secFrac, err := strconv.ParseFloat("0."+sub, 64)
 	*cursor = to
 	if err != nil {
-		return 0, ErrSecFracInvalid
+		return 0, syslogparser.ErrSecFracInvalid
 	}
 
 	return secFrac, nil
@@ -477,7 +460,7 @@ func parseNumericalTimeOffset(buff []byte, cursor *int, l int) (*time.Location, 
 	sign := buff[*cursor]
 
 	if (sign != '+') && (sign != '-') {
-		return loc, ErrTimeZoneInvalid
+		return loc, syslogparser.ErrTimeZoneInvalid
 	}
 
 	*cursor++
@@ -503,7 +486,7 @@ func getHourMinute(buff []byte, cursor *int, l int) (int, int, error) {
 	}
 
 	if buff[*cursor] != ':' {
-		return 0, 0, ErrInvalidTimeFormat
+		return 0, 0, syslogparser.ErrInvalidTimeFormat
 	}
 
 	*cursor++
@@ -541,7 +524,7 @@ func parseStructuredData(buff []byte, cursor *int, l int) (string, error) {
 	}
 
 	if buff[*cursor] != '[' {
-		return sdData, ErrNoStructuredData
+		return sdData, syslogparser.ErrNoStructuredData
 	}
 
 	from := *cursor
@@ -569,7 +552,7 @@ func parseStructuredData(buff []byte, cursor *int, l int) (string, error) {
 		return string(buff[from:to]), nil
 	}
 
-	return sdData, ErrNoStructuredData
+	return sdData, syslogparser.ErrNoStructuredData
 }
 
 func parseUpToLen(buff []byte, cursor *int, l int, maxLen int, e error) (string, error) {

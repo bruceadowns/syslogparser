@@ -248,7 +248,7 @@ func (s *Rfc3164TestSuite) BenchmarkParsemessage(c *C) {
 	p := NewParser(buff)
 
 	for i := 0; i < c.N; i++ {
-		_, err := p.parsemessage()
+		_, err := p.parseMessage()
 		if err != syslogparser.ErrEOL {
 			c.Fatal(err)
 		}
@@ -283,7 +283,7 @@ func (s *Rfc3164TestSuite) assertRfc3164Header(c *C, hdr header, b []byte, expC 
 
 func (s *Rfc3164TestSuite) assertRfc3164message(c *C, msg rfc3164message, b []byte, expC int, e error) {
 	p := NewParser(b)
-	obtained, err := p.parsemessage()
+	obtained, err := p.parseMessage()
 	c.Assert(err, Equals, e)
 	c.Assert(obtained, Equals, msg)
 	c.Assert(p.cursor, Equals, expC)

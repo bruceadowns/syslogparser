@@ -66,7 +66,7 @@ func (p *Parser) Parse() error {
 		p.cursor++
 	}
 
-	msg, err := p.parsemessage()
+	msg, err := p.parseMessage()
 	if err != syslogparser.ErrEOL {
 		return err
 	}
@@ -116,7 +116,7 @@ func (p *Parser) parseHeader() (header, error) {
 	return hdr, nil
 }
 
-func (p *Parser) parsemessage() (rfc3164message, error) {
+func (p *Parser) parseMessage() (rfc3164message, error) {
 	msg := rfc3164message{}
 	var err error
 
@@ -249,11 +249,9 @@ func (p *Parser) parseContent() (string, error) {
 }
 
 func fixTimestampIfNeeded(ts *time.Time) {
-	now := time.Now()
 	y := ts.Year()
-
-	if ts.Year() == 0 {
-		y = now.Year()
+	if y == 0 {
+		y = time.Now().Year()
 	}
 
 	newTs := time.Date(y, ts.Month(), ts.Day(), ts.Hour(), ts.Minute(),
