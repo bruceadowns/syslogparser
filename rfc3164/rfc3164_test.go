@@ -29,10 +29,9 @@ func (s *Rfc3164TestSuite) TestParser_Valid(c *C) {
 
 	p := NewParser(buff)
 	expectedP := &Parser{
-		buff:     buff,
-		cursor:   0,
-		l:        len(buff),
-		location: time.UTC,
+		buff:   buff,
+		cursor: 0,
+		l:      len(buff),
 	}
 
 	c.Assert(p, DeepEquals, expectedP)

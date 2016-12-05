@@ -58,11 +58,6 @@ func NewParser(buff []byte) *Parser {
 	}
 }
 
-// Location ...
-func (p *Parser) Location(location *time.Location) {
-	// Ignore as RFC5424 syslog always has a timezone
-}
-
 // Parse ...
 func (p *Parser) Parse() error {
 	hdr, err := p.parseHeader()

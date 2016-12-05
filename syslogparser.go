@@ -1,9 +1,6 @@
 package syslogparser
 
-import (
-	"strconv"
-	"time"
-)
+import "strconv"
 
 // Constants
 const (
@@ -52,7 +49,6 @@ func (err *ParserError) Error() string {
 type LogParser interface {
 	Parse() error
 	Dump() LogParts
-	Location(*time.Location)
 }
 
 // Priority ...
