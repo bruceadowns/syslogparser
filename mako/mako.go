@@ -44,10 +44,10 @@ func NewParser(buff []byte, hostname string) *Parser {
 
 func preProcess(in *bytes.Buffer) io.Reader {
 	r := strings.NewReplacer(
-		",\"level\":30,", ",\"level\":\"INFO\",",
-		",\"@timestamp\"", ",\"timestamp\"",
-		",\"@version\"", ",\"version\"",
-		",\"@v\"", ",\"version\"")
+		"\"level\":30,", "\"level\":\"INFO\",",
+		"\"@timestamp\"", "\"timestamp\"",
+		"\"@version\"", "\"version\"",
+		"\"@v\"", "\"version\"")
 	out := r.Replace(in.String())
 	return bytes.NewBufferString(out)
 }
@@ -86,7 +86,7 @@ func (p *Parser) Dump() syslogparser.LogParts {
 		"service_pipeline":    p.MakoJSON.ServicePipeline,
 		"service_version":     p.MakoJSON.ServiceVersion,
 		"thread_name":         p.MakoJSON.ThreadName,
-		"@timestamp":          timestamp,
+		"timestamp":           timestamp,
 		"version":             version,
 	}
 }

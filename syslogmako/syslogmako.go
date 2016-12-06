@@ -73,15 +73,16 @@ func (p *Parser) Parse() error {
 
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
-	atTimestamp := "0"
+	timestamp := "0"
 	if ts, err := time.Parse(time.RFC3339, p.message.mako.Timestamp); err == nil {
-		atTimestamp = syslogparser.Epoch(ts)
+		timestamp = syslogparser.Epoch(ts)
 	} else {
 		log.Printf("Error parsing timestamp: %s", err)
+		timestamp = syslogparser.Epoch(p.header.timestamp)
 	}
 
 	return syslogparser.LogParts{
-		"timestamp":           syslogparser.Epoch(p.header.timestamp),
+		"timestamp":           timestamp,
 		"hostname":            p.header.hostname,
 		"app_name":            p.message.app,
 		"proc_id":             p.message.pid,
@@ -95,7 +96,6 @@ func (p *Parser) Dump() syslogparser.LogParts {
 		"service_pipeline":    p.message.mako.ServicePipeline,
 		"service_version":     p.message.mako.ServiceVersion,
 		"thread_name":         p.message.mako.ThreadName,
-		"@timestamp":          atTimestamp,
 		"version":             strconv.Itoa(p.message.mako.Version),
 	}
 }
