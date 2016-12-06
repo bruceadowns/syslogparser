@@ -2,7 +2,6 @@ package rfc3164
 
 import (
 	"bytes"
-	"strconv"
 	"testing"
 	"time"
 
@@ -44,7 +43,7 @@ func (s *Rfc3164TestSuite) TestParser_Valid(c *C) {
 
 	obtained := p.Dump()
 	expected := syslogparser.LogParts{
-		"timestamp": strconv.FormatInt(time.Date(now.Year(), time.October, 11, 22, 14, 15, 0, time.UTC).Unix(), 10),
+		"timestamp": syslogparser.Epoch(time.Date(now.Year(), time.October, 11, 22, 14, 15, 0, time.UTC)),
 		"hostname":  "mymachine",
 		"tag":       "very.large.syslog.message.tag",
 		"content":   "'su root' failed for lonvick on /dev/pts/8",
@@ -69,7 +68,7 @@ func (s *Rfc3164TestSuite) TestParseWithout_Hostname(c *C) {
 
 	obtained := p.Dump()
 	expected := syslogparser.LogParts{
-		"timestamp": strconv.FormatInt(time.Date(now.Year(), time.June, 23, 13, 17, 42, 0, time.UTC).Unix(), 10),
+		"timestamp": syslogparser.Epoch(time.Date(now.Year(), time.June, 23, 13, 17, 42, 0, time.UTC)),
 		"hostname":  "testhost",
 		"tag":       "chronyd",
 		"content":   "Selected source 192.168.65.1",

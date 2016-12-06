@@ -2,7 +2,6 @@ package rfc5424
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 	"time"
 
@@ -40,7 +39,7 @@ func (s *Rfc5424TestSuite) TestParser_Valid(c *C) {
 			"facility":        "4",
 			"severity":        "2",
 			"version":         "1",
-			"timestamp":       strconv.FormatInt(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC).Unix(), 10),
+			"timestamp":       syslogparser.Epoch(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC)),
 			"hostname":        "mymachine.example.com",
 			"app_name":        "su",
 			"proc_id":         "-",
@@ -53,7 +52,7 @@ func (s *Rfc5424TestSuite) TestParser_Valid(c *C) {
 			"facility":        "20",
 			"severity":        "5",
 			"version":         "1",
-			"timestamp":       strconv.FormatInt(time.Date(2003, time.August, 24, 5, 14, 15, 3*10e2, tmpTs.Location()).Unix(), 10),
+			"timestamp":       syslogparser.Epoch(time.Date(2003, time.August, 24, 5, 14, 15, 3*10e2, tmpTs.Location())),
 			"hostname":        "192.0.2.1",
 			"app_name":        "myproc",
 			"proc_id":         "8710",
@@ -66,7 +65,7 @@ func (s *Rfc5424TestSuite) TestParser_Valid(c *C) {
 			"facility":        "20",
 			"severity":        "5",
 			"version":         "1",
-			"timestamp":       strconv.FormatInt(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC).Unix(), 10),
+			"timestamp":       syslogparser.Epoch(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC)),
 			"hostname":        "mymachine.example.com",
 			"app_name":        "evntslog",
 			"proc_id":         "-",
@@ -79,7 +78,7 @@ func (s *Rfc5424TestSuite) TestParser_Valid(c *C) {
 			"facility":        "20",
 			"severity":        "5",
 			"version":         "1",
-			"timestamp":       strconv.FormatInt(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC).Unix(), 10),
+			"timestamp":       syslogparser.Epoch(time.Date(2003, time.October, 11, 22, 14, 15, 3*10e5, time.UTC)),
 			"hostname":        "mymachine.example.com",
 			"app_name":        "evntslog",
 			"proc_id":         "-",

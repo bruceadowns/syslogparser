@@ -92,7 +92,7 @@ func (p *Parser) Dump() syslogparser.LogParts {
 		"facility":        strconv.Itoa(p.header.priority.F.Value),
 		"severity":        strconv.Itoa(p.header.priority.S.Value),
 		"version":         strconv.Itoa(p.header.version),
-		"timestamp":       strconv.FormatInt(p.header.timestamp.Unix(), 10),
+		"timestamp":       syslogparser.Epoch(p.header.timestamp),
 		"hostname":        p.header.hostname,
 		"app_name":        p.header.appName,
 		"proc_id":         p.header.procID,

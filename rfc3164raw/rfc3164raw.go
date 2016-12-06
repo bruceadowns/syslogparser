@@ -2,7 +2,6 @@ package rfc3164raw
 
 import (
 	"bytes"
-	"strconv"
 	"time"
 
 	"github.com/bruceadowns/syslogparser"
@@ -70,7 +69,7 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
-		"timestamp": strconv.FormatInt(p.header.timestamp.Unix(), 10),
+		"timestamp": syslogparser.Epoch(p.header.timestamp),
 		"hostname":  p.header.hostname,
 		"app_name":  p.message.app,
 		"proc_id":   p.message.pid,

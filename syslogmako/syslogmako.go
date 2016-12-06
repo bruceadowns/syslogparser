@@ -3,6 +3,7 @@ package syslogmako
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"strconv"
 	"time"
 
@@ -73,12 +74,14 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	atTimestamp := "0"
-	if ts, err := time.Parse(time.RFC1123Z, p.message.mako.Timestamp); err != nil {
-		atTimestamp = strconv.FormatInt(ts.Unix(), 10)
+	if ts, err := time.Parse(time.RFC3339, p.message.mako.Timestamp); err == nil {
+		atTimestamp = syslogparser.Epoch(ts)
+	} else {
+		log.Printf("Error parsing timestamp: %s", err)
 	}
 
 	return syslogparser.LogParts{
-		"timestamp":           strconv.FormatInt(p.header.timestamp.Unix(), 10),
+		"timestamp":           syslogparser.Epoch(p.header.timestamp),
 		"hostname":            p.header.hostname,
 		"app_name":            p.message.app,
 		"proc_id":             p.message.pid,

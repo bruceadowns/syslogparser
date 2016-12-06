@@ -3,6 +3,7 @@ package mako
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -58,8 +59,10 @@ func (p *Parser) Dump() syslogparser.LogParts {
 	levelValue := strconv.Itoa(p.MakoJSON.LevelValue)
 
 	timestamp := "0"
-	if ts, err := time.Parse(time.RFC1123Z, p.MakoJSON.Timestamp); err != nil {
-		timestamp = strconv.FormatInt(ts.Unix(), 10)
+	if ts, err := time.Parse(time.RFC3339, p.MakoJSON.Timestamp); err == nil {
+		timestamp = syslogparser.Epoch(ts)
+	} else {
+		log.Printf("Error parsing timestamp: %s", err)
 	}
 
 	version := strconv.Itoa(p.MakoJSON.Version)

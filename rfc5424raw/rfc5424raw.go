@@ -87,7 +87,7 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
-		"timestamp":       strconv.FormatInt(p.header.timestamp.Unix(), 10),
+		"timestamp":       syslogparser.Epoch(p.header.timestamp),
 		"hostname":        p.header.hostname,
 		"app_name":        p.header.appName,
 		"proc_id":         p.header.procID,

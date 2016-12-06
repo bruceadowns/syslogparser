@@ -1,6 +1,9 @@
 package syslogparser
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 // Constants
 const (
@@ -212,4 +215,9 @@ func ParseHostname(buff []byte, cursor *int, l int) (string, error) {
 	*cursor = to
 
 	return string(hostname), nil
+}
+
+// Epoch returns java friendly timestamp
+func Epoch(ts time.Time) string {
+	return strconv.FormatInt(ts.UnixNano()/1000000, 10)
 }
