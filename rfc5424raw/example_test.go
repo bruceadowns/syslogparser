@@ -20,7 +20,7 @@ func TestExampleNewParserRsyslog(t *testing.T) {
 	t.Log(p.Dump())
 }
 
-func TestExampleNewParserDd(t *testing.T) {
+func TestExampleNewParserDdCollector(t *testing.T) {
 	b := `2016-11-30T16:08:49.538629-08:00 soa-prime-data1 dd.collector[2832]: INFO (collector.py:379): Finished run #1169220. Collection time: 4.09s. Emit time: 0.01s`
 	t.Log(b)
 	buff := []byte(b)
@@ -36,6 +36,20 @@ func TestExampleNewParserDd(t *testing.T) {
 
 func TestExampleNewParserGmetad(t *testing.T) {
 	b := `2016-11-30T16:09:19.518625-08:00 soa-prime-data1 /usr/sbin/gmetad[2263]: data_thread() got no answer from any [my cluster] datasource`
+	t.Log(b)
+	buff := []byte(b)
+
+	p := rfc5424raw.NewParser(buff)
+	err := p.Parse()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(p.Dump())
+}
+
+func TestExampleNewParserDdForwarder(t *testing.T) {
+	b := `2016-12-05T16:41:14.827138-08:00 soa-prime-data1 dd.forwarder[2831]: INFO (transaction.py:150): Flushing 1 transaction during flush #7755900`
 	t.Log(b)
 	buff := []byte(b)
 

@@ -2,6 +2,7 @@ package rfc3164raw
 
 import (
 	"bytes"
+	"strconv"
 	"time"
 
 	"github.com/bruceadowns/syslogparser"
@@ -69,10 +70,10 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
-		"timestamp": p.header.timestamp,
+		"timestamp": strconv.FormatInt(p.header.timestamp.Unix(), 10),
 		"hostname":  p.header.hostname,
-		"app":       p.message.app,
-		"pid":       p.message.pid,
+		"app_name":  p.message.app,
+		"proc_id":   p.message.pid,
 		"content":   p.message.content,
 	}
 }
@@ -151,7 +152,7 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 
 		// XXX : If the timestamp is invalid we try to push the cursor one byte
 		// XXX : further, in case it is a space
-		if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+		if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 			p.cursor++
 		}
 
@@ -162,7 +163,7 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 
 	p.cursor += tsFmtLen
 
-	if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+	if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 		p.cursor++
 	}
 
@@ -224,7 +225,7 @@ func (p *Parser) parseApp() (string, string, error) {
 		p.cursor++
 	}
 
-	if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+	if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 		p.cursor++
 	}
 

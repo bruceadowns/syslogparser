@@ -3,6 +3,7 @@ package syslogmako
 import (
 	"bytes"
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/bruceadowns/syslogparser"
@@ -71,13 +72,28 @@ func (p *Parser) Parse() error {
 
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
+	atTimestamp := "0"
+	if ts, err := time.Parse(time.RFC1123Z, p.message.mako.Timestamp); err != nil {
+		atTimestamp = strconv.FormatInt(ts.Unix(), 10)
+	}
+
 	return syslogparser.LogParts{
-		"timestamp": p.header.timestamp,
-		"hostname":  p.header.hostname,
-		"app":       p.message.app,
-		"pid":       p.message.pid,
-		"content":   p.message.content,
-		"mako":      p.message.mako,
+		"timestamp":           strconv.FormatInt(p.header.timestamp.Unix(), 10),
+		"hostname":            p.header.hostname,
+		"app_name":            p.message.app,
+		"proc_id":             p.message.pid,
+		"content":             p.message.content,
+		"logger_name":         p.message.mako.LoggerName,
+		"level":               p.message.mako.Level,
+		"level_value":         strconv.Itoa(p.message.mako.LevelValue),
+		"message":             p.message.mako.Message,
+		"service_environment": p.message.mako.ServiceEnvironment,
+		"service_name":        p.message.mako.ServiceName,
+		"service_pipeline":    p.message.mako.ServicePipeline,
+		"service_version":     p.message.mako.ServiceVersion,
+		"thread_name":         p.message.mako.ThreadName,
+		"@timestamp":          atTimestamp,
+		"version":             strconv.Itoa(p.message.mako.Version),
 	}
 }
 
@@ -159,7 +175,7 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 
 		// XXX : If the timestamp is invalid we try to push the cursor one byte
 		// XXX : further, in case it is a space
-		if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+		if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 			p.cursor++
 		}
 
@@ -170,7 +186,7 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 
 	p.cursor += tsFmtLen
 
-	if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+	if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 		p.cursor++
 	}
 
@@ -232,7 +248,7 @@ func (p *Parser) parseApp() (string, string, error) {
 		p.cursor++
 	}
 
-	if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+	if p.cursor < p.l && p.buff[p.cursor] == ' ' {
 		p.cursor++
 	}
 

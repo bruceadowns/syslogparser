@@ -87,7 +87,7 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
-		"timestamp":       p.header.timestamp,
+		"timestamp":       strconv.FormatInt(p.header.timestamp.Unix(), 10),
 		"hostname":        p.header.hostname,
 		"app_name":        p.header.appName,
 		"proc_id":         p.header.procID,
@@ -206,7 +206,6 @@ func (p *Parser) parseApp() (string, string, error) {
 			}
 
 			p.cursor++
-			p.cursor++
 			break
 		} else if endOfTag {
 			if !foundApp {
@@ -224,7 +223,7 @@ func (p *Parser) parseApp() (string, string, error) {
 		p.cursor++
 	}
 
-	if (p.cursor < p.l) && (p.buff[p.cursor] == ' ') {
+	if p.cursor < p.l && (p.buff[p.cursor] == ' ' || p.buff[p.cursor] == ':') {
 		p.cursor++
 	}
 
@@ -448,7 +447,7 @@ func parseNumericalTimeOffset(buff []byte, cursor *int, l int) (*time.Location, 
 
 	sign := buff[*cursor]
 
-	if (sign != '+') && (sign != '-') {
+	if sign != '+' && sign != '-' {
 		return loc, syslogparser.ErrTimeZoneInvalid
 	}
 

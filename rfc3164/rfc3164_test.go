@@ -2,6 +2,7 @@ package rfc3164
 
 import (
 	"bytes"
+	"strconv"
 	"testing"
 	"time"
 
@@ -43,13 +44,13 @@ func (s *Rfc3164TestSuite) TestParser_Valid(c *C) {
 
 	obtained := p.Dump()
 	expected := syslogparser.LogParts{
-		"timestamp": time.Date(now.Year(), time.October, 11, 22, 14, 15, 0, time.UTC),
+		"timestamp": strconv.FormatInt(time.Date(now.Year(), time.October, 11, 22, 14, 15, 0, time.UTC).Unix(), 10),
 		"hostname":  "mymachine",
 		"tag":       "very.large.syslog.message.tag",
 		"content":   "'su root' failed for lonvick on /dev/pts/8",
-		"priority":  34,
-		"facility":  4,
-		"severity":  2,
+		"priority":  "34",
+		"facility":  "4",
+		"severity":  "2",
 	}
 
 	c.Assert(obtained, DeepEquals, expected)
@@ -68,13 +69,13 @@ func (s *Rfc3164TestSuite) TestParseWithout_Hostname(c *C) {
 
 	obtained := p.Dump()
 	expected := syslogparser.LogParts{
-		"timestamp": time.Date(now.Year(), time.June, 23, 13, 17, 42, 0, time.UTC),
+		"timestamp": strconv.FormatInt(time.Date(now.Year(), time.June, 23, 13, 17, 42, 0, time.UTC).Unix(), 10),
 		"hostname":  "testhost",
 		"tag":       "chronyd",
 		"content":   "Selected source 192.168.65.1",
-		"priority":  30,
-		"facility":  3,
-		"severity":  6,
+		"priority":  "30",
+		"facility":  "3",
+		"severity":  "6",
 	}
 
 	c.Assert(obtained, DeepEquals, expected)

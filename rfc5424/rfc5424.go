@@ -88,11 +88,11 @@ func (p *Parser) Parse() error {
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
-		"priority":        p.header.priority.P,
-		"facility":        p.header.priority.F.Value,
-		"severity":        p.header.priority.S.Value,
-		"version":         p.header.version,
-		"timestamp":       p.header.timestamp,
+		"priority":        strconv.Itoa(p.header.priority.P),
+		"facility":        strconv.Itoa(p.header.priority.F.Value),
+		"severity":        strconv.Itoa(p.header.priority.S.Value),
+		"version":         strconv.Itoa(p.header.version),
+		"timestamp":       strconv.FormatInt(p.header.timestamp.Unix(), 10),
 		"hostname":        p.header.hostname,
 		"app_name":        p.header.appName,
 		"proc_id":         p.header.procID,
@@ -454,7 +454,7 @@ func parseNumericalTimeOffset(buff []byte, cursor *int, l int) (*time.Location, 
 
 	sign := buff[*cursor]
 
-	if (sign != '+') && (sign != '-') {
+	if sign != '+' && sign != '-' {
 		return loc, syslogparser.ErrTimeZoneInvalid
 	}
 
