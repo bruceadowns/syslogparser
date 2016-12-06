@@ -3,6 +3,7 @@ package mako
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"log"
 	"strconv"
 	"strings"
@@ -22,9 +23,8 @@ type JSON struct {
 	ServicePipeline    string `json:"service_pipeline,omitempty"`
 	ServiceVersion     string `json:"service_version,omitempty"`
 	ThreadName         string `json:"thread_name,omitempty"`
-	Timestamp          string `json:"@timestamp,omitempty"`
-	Version            int    `json:"@version,omitempty"`
-	V                  int    `json:"v,omitempty"`
+	Timestamp          string `json:"timestamp,omitempty"`
+	Version            int    `json:"version,omitempty"`
 }
 
 // Parser struct
@@ -42,11 +42,19 @@ func NewParser(buff []byte, hostname string) *Parser {
 	}
 }
 
+func preProcess(in *bytes.Buffer) io.Reader {
+	r := strings.NewReplacer(
+		",\"level\":30,", ",\"level\":\"INFO\",",
+		",\"@timestamp\"", ",\"timestamp\"",
+		",\"@version\"", ",\"version\"",
+		",\"@v\"", ",\"version\"")
+	out := r.Replace(in.String())
+	return bytes.NewBufferString(out)
+}
+
 // Parse ...
 func (p *Parser) Parse() error {
-	bb := bytes.NewBufferString(strings.Replace(p.bb.String(), ",\"level\":30,", ",\"level\":\"INFO\",", -1))
-
-	err := json.NewDecoder(bb).Decode(&p.MakoJSON)
+	err := json.NewDecoder(preProcess(p.bb)).Decode(&p.MakoJSON)
 	if err != nil {
 		return err
 	}
