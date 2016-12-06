@@ -25,6 +25,7 @@ type JSON struct {
 	ThreadName         string `json:"thread_name,omitempty"`
 	Timestamp          string `json:"timestamp,omitempty"`
 	Version            int    `json:"version,omitempty"`
+	StackTrace         string `json:"stack_trace,omitempty"`
 }
 
 // Parser struct
@@ -85,6 +86,7 @@ func (p *Parser) Dump() syslogparser.LogParts {
 		"service_name":        p.MakoJSON.ServiceName,
 		"service_pipeline":    p.MakoJSON.ServicePipeline,
 		"service_version":     p.MakoJSON.ServiceVersion,
+		"stack_trace":         p.MakoJSON.StackTrace,
 		"thread_name":         p.MakoJSON.ThreadName,
 		"timestamp":           timestamp,
 		"version":             version,
