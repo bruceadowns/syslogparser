@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -44,13 +45,22 @@ func NewParser(buff []byte, hostname net.Addr) *Parser {
 	}
 }
 
+// global const in order to compile once
+var reVersionStrung = regexp.MustCompile("\"version\":\"[0-9.]+\"")
+
 func preProcess(in *bytes.Buffer) io.Reader {
-	r := strings.NewReplacer(
+	replacer := strings.NewReplacer(
+		"\"level\":10,", "\"level\":\"TRACE\",",
+		"\"level\":20,", "\"level\":\"DEBUG\",",
 		"\"level\":30,", "\"level\":\"INFO\",",
+		"\"level\":40,", "\"level\":\"WARN\",",
+		"\"level\":50,", "\"level\":\"ERROR\",",
+		"\"level\":60,", "\"level\":\"ERROR\",",
 		"\"@timestamp\"", "\"timestamp\"",
-		"\"@version\"", "\"version\"",
-		"\"@v\"", "\"version\"")
-	out := r.Replace(in.String())
+		"\"@version\"", "\"version\"")
+
+	out := replacer.Replace(in.String())
+	out = reVersionStrung.ReplaceAllString(out, "\"version\":0")
 	return bytes.NewBufferString(out)
 }
 
