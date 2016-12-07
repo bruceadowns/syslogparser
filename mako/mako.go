@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"net"
 	"strconv"
 	"strings"
 	"time"
@@ -36,10 +37,10 @@ type Parser struct {
 }
 
 // NewParser ...
-func NewParser(buff []byte, hostname string) *Parser {
+func NewParser(buff []byte, hostname net.Addr) *Parser {
 	return &Parser{
 		bb:       bytes.NewBuffer(buff),
-		hostname: hostname,
+		hostname: hostname.String(),
 	}
 }
 
