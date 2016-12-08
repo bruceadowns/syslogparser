@@ -45,7 +45,8 @@ func (s *Rfc3164TestSuite) TestParser_Valid(c *C) {
 	expected := syslogparser.LogParts{
 		"timestamp": syslogparser.Epoch(time.Date(now.Year(), time.October, 11, 22, 14, 15, 0, time.UTC)),
 		"hostname":  "mymachine",
-		"tag":       "very.large.syslog.message.tag",
+		"app_name":  "very.large.syslog.message.tag",
+		"proc_id":   "",
 		"content":   "'su root' failed for lonvick on /dev/pts/8",
 		"priority":  "34",
 		"facility":  "4",
@@ -70,7 +71,8 @@ func (s *Rfc3164TestSuite) TestParseWithout_Hostname(c *C) {
 	expected := syslogparser.LogParts{
 		"timestamp": syslogparser.Epoch(time.Date(now.Year(), time.June, 23, 13, 17, 42, 0, time.UTC)),
 		"hostname":  "testhost",
-		"tag":       "chronyd",
+		"app_name":  "chronyd",
+		"proc_id":   "1119",
 		"content":   "Selected source 192.168.65.1",
 		"priority":  "30",
 		"facility":  "3",
@@ -100,9 +102,10 @@ func (s *Rfc3164TestSuite) TestParseHeader_InvalidTimestamp(c *C) {
 
 func (s *Rfc3164TestSuite) TestParsemessage_Valid(c *C) {
 	content := "foo bar baz blah quux"
-	buff := []byte("sometag[123]: " + content)
+	buff := []byte("someapp[somepid]: " + content)
 	hdr := rfc3164message{
-		tag:     "sometag",
+		app:     "someapp",
+		pid:     "somepid",
 		content: content,
 	}
 
@@ -151,23 +154,26 @@ func (s *Rfc3164TestSuite) TestParseTimestamp_Valid(c *C) {
 
 func (s *Rfc3164TestSuite) TestParseTag_Pid(c *C) {
 	buff := []byte("apache2[10]:")
-	tag := "apache2"
+	app := "apache2"
+	pid := "10"
 
-	s.assertTag(c, tag, buff, len(buff), nil)
+	s.assertTag(c, app, pid, buff, len(buff), nil)
 }
 
 func (s *Rfc3164TestSuite) TestParseTag_NoPid(c *C) {
 	buff := []byte("apache2:")
-	tag := "apache2"
+	app := "apache2"
+	pid := ""
 
-	s.assertTag(c, tag, buff, len(buff), nil)
+	s.assertTag(c, app, pid, buff, len(buff), nil)
 }
 
 func (s *Rfc3164TestSuite) TestParseTag_TrailingSpace(c *C) {
 	buff := []byte("apache2: ")
-	tag := "apache2"
+	app := "apache2"
+	pid := ""
 
-	s.assertTag(c, tag, buff, len(buff), nil)
+	s.assertTag(c, app, pid, buff, len(buff), nil)
 }
 
 func (s *Rfc3164TestSuite) TestParseContent_Valid(c *C) {
@@ -217,7 +223,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseTag(c *C) {
 	p := NewParser(buff)
 
 	for i := 0; i < c.N; i++ {
-		_, err := p.parseTag()
+		_, _, err := p.parseApp()
 		if err != nil {
 			c.Fatal(err)
 		}
@@ -264,10 +270,11 @@ func (s *Rfc3164TestSuite) assertTimestamp(c *C, ts time.Time, b []byte, expC in
 	c.Assert(err, Equals, e)
 }
 
-func (s *Rfc3164TestSuite) assertTag(c *C, t string, b []byte, expC int, e error) {
+func (s *Rfc3164TestSuite) assertTag(c *C, a, pi string, b []byte, expC int, e error) {
 	p := NewParser(b)
-	obtained, err := p.parseTag()
-	c.Assert(obtained, Equals, t)
+	app, pid, err := p.parseApp()
+	c.Assert(app, Equals, a)
+	c.Assert(pid, Equals, pi)
 	c.Assert(p.cursor, Equals, expC)
 	c.Assert(err, Equals, e)
 }

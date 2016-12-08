@@ -26,7 +26,8 @@ type header struct {
 }
 
 type rfc3164message struct {
-	tag     string
+	app     string
+	pid     string
 	content string
 }
 
@@ -78,7 +79,8 @@ func (p *Parser) Dump() syslogparser.LogParts {
 	return syslogparser.LogParts{
 		"timestamp": syslogparser.Epoch(p.header.timestamp),
 		"hostname":  p.header.hostname,
-		"tag":       p.message.tag,
+		"app_name":  p.message.app,
+		"proc_id":   p.message.pid,
 		"content":   p.message.content,
 		"priority":  strconv.Itoa(p.priority.P),
 		"facility":  strconv.Itoa(p.priority.F.Value),
@@ -114,17 +116,19 @@ func (p *Parser) parseMessage() (rfc3164message, error) {
 	msg := rfc3164message{}
 	var err error
 
-	tag, err := p.parseTag()
+	app, pid, err := p.parseTag()
 	if err != nil {
 		return msg, err
 	}
+
+	msg.app = app
+	msg.pid = pid
 
 	content, err := p.parseContent()
 	if err != syslogparser.ErrEOL {
 		return msg, err
 	}
 
-	msg.tag = tag
 	msg.content = content
 
 	return msg, err
@@ -190,31 +194,44 @@ func (p *Parser) parseHostname() (string, error) {
 }
 
 // http://tools.ietf.org/html/rfc3164#section-4.1.3
-func (p *Parser) parseTag() (string, error) {
+func (p *Parser) parseTag() (string, string, error) {
 	var b byte
-	var endOfTag bool
-	var bracketOpen bool
-	var tag []byte
-	var err error
-	var found bool
+	var endOfTag, endOfApp, endOfPid bool
+	var app, pid []byte
+	var foundApp, foundPid bool
 
 	from := p.cursor
 
 	for {
 		b = p.buff[p.cursor]
-		bracketOpen = (b == '[')
+
+		endOfApp = b == '['
+		endOfPid = b == ']'
 		endOfTag = (b == ':' || b == ' ')
 
-		// XXX : parse PID ?
-		if bracketOpen {
-			tag = p.buff[from:p.cursor]
-			found = true
-		}
+		if endOfApp {
+			app = p.buff[from:p.cursor]
+			from = p.cursor
+			foundApp = true
+		} else if endOfPid {
+			if !foundApp {
+				app = p.buff[from:p.cursor]
+				foundApp = true
+			} else if !foundPid {
+				pid = p.buff[from+1 : p.cursor]
+				foundPid = true
+			}
 
-		if endOfTag {
-			if !found {
-				tag = p.buff[from:p.cursor]
-				found = true
+			p.cursor++
+			p.cursor++
+			break
+		} else if endOfTag {
+			if !foundApp {
+				app = p.buff[from:p.cursor]
+				foundApp = true
+			} else if !foundPid {
+				pid = p.buff[from+1 : p.cursor]
+				foundPid = true
 			}
 
 			p.cursor++
@@ -228,7 +245,7 @@ func (p *Parser) parseTag() (string, error) {
 		p.cursor++
 	}
 
-	return string(tag), err
+	return string(app), string(pid), nil
 }
 
 func (p *Parser) parseContent() (string, error) {

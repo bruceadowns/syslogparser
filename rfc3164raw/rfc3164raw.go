@@ -101,7 +101,7 @@ func (p *Parser) parseMessage() (rfc3164Message, error) {
 	msg := rfc3164Message{}
 	var err error
 
-	app, pid, err := p.parseApp()
+	app, pid, err := p.parseTag()
 	if err != nil {
 		return msg, err
 	}
@@ -177,9 +177,9 @@ func (p *Parser) parseHostname() (string, error) {
 	return syslogparser.ParseHostname(p.buff, &p.cursor, p.l)
 }
 
-func (p *Parser) parseApp() (string, string, error) {
+func (p *Parser) parseTag() (string, string, error) {
 	var b byte
-	var endOfTag, closeBracket, openBracket bool
+	var endOfTag, endOfPid, endOfApp bool
 	var app, pid []byte
 	var foundApp, foundPid bool
 
@@ -188,15 +188,15 @@ func (p *Parser) parseApp() (string, string, error) {
 	for {
 		b = p.buff[p.cursor]
 
-		openBracket = (b == '[')
-		closeBracket = (b == ']')
+		endOfApp = b == '['
+		endOfPid = (b == ']')
 		endOfTag = (b == ':' || b == ' ')
 
-		if openBracket {
+		if endOfApp {
 			app = p.buff[from:p.cursor]
 			from = p.cursor
 			foundApp = true
-		} else if closeBracket {
+		} else if endOfPid {
 			if !foundApp {
 				app = p.buff[from:p.cursor]
 				foundApp = true
