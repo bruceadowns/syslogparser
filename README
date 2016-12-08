@@ -116,6 +116,15 @@ Additional Parsers
 * cloud-frontdoor-1971969812-8mv9p
 ** 2016/12/07 17:17:54 [info] 13#13: *189579 client closed connection while SSL handshaking, client: 172.16.1.0, server: 0.0.0.0:8443
 
+* kubedns
+** I1207 18:14:02.747414       1 dns.go:539] records:[], retval:[], path:[local cluster svc default com datadoghq agent 5-8-5-app]
+
+* dd-agent healthz
+** 2016/12/07 18:15:15 Worker running netstat -an | grep udp | grep 8125
+
+* dnscheck
+** Successfully looked up agent.datadoghq.com against 172.30.0.10: [50.16.191.241 23.21.190.187 54.235.93.251 54.235.81.255 54.225.178.28 54.204.24.203 50.19.122.12 50.17.190.236]
+
 
 Running tests
 -------------
