@@ -12,8 +12,7 @@ func TestExampleNewParserRsyslog(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc5424raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -26,8 +25,7 @@ func TestExampleNewParserDdCollector(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc5424raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -40,8 +38,7 @@ func TestExampleNewParserGmetad(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc5424raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -54,8 +51,7 @@ func TestExampleNewParserDdForwarder(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc5424raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 

@@ -67,8 +67,7 @@ func TestExampleNewParserSso(t *testing.T) {
 
 	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
 
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -81,8 +80,7 @@ func TestExampleNewParserMituiVideoCreate(t *testing.T) {
 
 	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
 
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -95,8 +93,7 @@ func TestExampleNewParserSampleGolang(t *testing.T) {
 
 	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
 
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -109,8 +106,7 @@ func TestExampleNewParserJcx(t *testing.T) {
 
 	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
 
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -123,8 +119,7 @@ func TestExampleNewParserMituiCloudalytics(t *testing.T) {
 
 	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
 
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 

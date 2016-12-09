@@ -12,8 +12,7 @@ func TestExampleNewParser(t *testing.T) {
 	buff := []byte(b)
 
 	p := syslogmako.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 

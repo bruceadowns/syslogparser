@@ -1,4 +1,4 @@
-SUBPACKAGES=. rfc3164 rfc5424 rfc3164raw rfc5424raw mako syslogmako
+SUBPACKAGES=. rfc3164 rfc5424 rfc3164raw rfc5424raw mako syslogmako journaljson journalmako
 
 help:
 	@echo "Available targets:"

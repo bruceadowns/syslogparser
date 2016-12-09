@@ -12,8 +12,7 @@ func TestExampleNewParserPid(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -26,8 +25,7 @@ func TestExampleNewParserBase(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -40,8 +38,7 @@ func TestExampleNewParserEc2(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164raw.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 

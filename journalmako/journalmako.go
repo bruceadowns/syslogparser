@@ -1,54 +1,36 @@
-package mako
+package journalmako
 
 import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
-	"net"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/bruceadowns/syslogparser"
+	"github.com/bruceadowns/syslogparser/journaljson"
+	"github.com/bruceadowns/syslogparser/mako"
 )
-
-// JSON holds mako structured json
-type JSON struct {
-	LoggerName         string `json:"logger_name,omitempty"`
-	Message            string `json:"message,omitempty"`
-	Level              string `json:"level,omitempty"`
-	LevelValue         int    `json:"level_value,omitempty"`
-	ServiceEnvironment string `json:"service_environment,omitempty"`
-	ServiceName        string `json:"service_name,omitempty"`
-	ServicePipeline    string `json:"service_pipeline,omitempty"`
-	ServiceVersion     string `json:"service_version,omitempty"`
-	ThreadName         string `json:"thread_name,omitempty"`
-	Timestamp          string `json:"timestamp,omitempty"`
-	Version            int    `json:"version,omitempty"`
-	StackTrace         string `json:"stack_trace,omitempty"`
-}
 
 // Parser struct
 type Parser struct {
-	bb       *bytes.Buffer
-	hostname string
-	makoJSON JSON
+	bb          *bytes.Buffer
+	journalJSON journaljson.JSON
+	makoJSON    mako.JSON
 }
 
 // NewParser ...
-func NewParser(buff []byte, hostname net.Addr) *Parser {
+func NewParser(buff []byte) *Parser {
 	return &Parser{
-		bb:       bytes.NewBuffer(buff),
-		hostname: hostname.String(),
+		bb: bytes.NewBuffer(buff),
 	}
 }
 
 // global const in order to compile once
 var reVersionStrung = regexp.MustCompile("\"version\":\"[0-9.]+\"")
 
-func preProcess(in *bytes.Buffer) io.Reader {
+func preProcess(in string) io.Reader {
 	replacer := strings.NewReplacer(
 		"\"level\":10,", "\"level\":\"TRACE\",",
 		"\"level\":20,", "\"level\":\"DEBUG\",",
@@ -59,15 +41,19 @@ func preProcess(in *bytes.Buffer) io.Reader {
 		"\"@timestamp\"", "\"timestamp\"",
 		"\"@version\"", "\"version\"")
 
-	out := replacer.Replace(in.String())
+	out := replacer.Replace(in)
 	out = reVersionStrung.ReplaceAllString(out, "\"version\":0")
+
 	return bytes.NewBufferString(out)
 }
 
 // Parse ...
 func (p *Parser) Parse() error {
-	err := json.NewDecoder(preProcess(p.bb)).Decode(&p.makoJSON)
-	if err != nil {
+	if err := json.NewDecoder(p.bb).Decode(&p.journalJSON); err != nil {
+		return err
+	}
+
+	if err := json.NewDecoder(preProcess(p.journalJSON.Message)).Decode(&p.makoJSON); err != nil {
 		return err
 	}
 
@@ -76,15 +62,16 @@ func (p *Parser) Parse() error {
 
 // Dump ...
 func (p *Parser) Dump() syslogparser.LogParts {
-	timestamp := "0"
-	if ts, err := time.Parse(time.RFC3339, p.makoJSON.Timestamp); err == nil {
-		timestamp = syslogparser.Epoch(ts)
-	} else {
-		log.Printf("Error parsing timestamp: %s", err)
+	timestamp := p.journalJSON.SourceRealtimeTimestamp
+	if len(timestamp) == 0 {
+		timestamp = p.journalJSON.RealtimeTimestamp
+	}
+	if len(timestamp) == 16 {
+		timestamp = timestamp[:len(timestamp)-3]
 	}
 
 	return syslogparser.LogParts{
-		"hostname":            p.hostname,
+		"hostname":            p.journalJSON.HostName,
 		"logger_name":         p.makoJSON.LoggerName,
 		"level":               p.makoJSON.Level,
 		"level_value":         strconv.Itoa(p.makoJSON.LevelValue),

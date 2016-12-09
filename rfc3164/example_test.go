@@ -12,8 +12,7 @@ func TestExampleNewParser(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -26,8 +25,7 @@ func TestExampleNewUbuntuRsyslog(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -40,8 +38,7 @@ func TestExampleNewUbuntuSystemd(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -54,8 +51,7 @@ func TestExampleNewOsx(t *testing.T) {
 	buff := []byte(b)
 
 	p := rfc3164.NewParser(buff)
-	err := p.Parse()
-	if err != nil {
+	if err := p.Parse(); err != nil {
 		t.Fatal(err)
 	}
 
