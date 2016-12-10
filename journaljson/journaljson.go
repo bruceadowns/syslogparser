@@ -3,6 +3,7 @@ package journaljson
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/bruceadowns/syslogparser"
 )
@@ -53,6 +54,10 @@ func (p *Parser) Parse() error {
 	err := json.NewDecoder(p.bb).Decode(&p.journalJSON)
 	if err != nil {
 		return err
+	}
+
+	if len(p.journalJSON.HostName) == 0 {
+		return fmt.Errorf("Host name not found")
 	}
 
 	return nil
