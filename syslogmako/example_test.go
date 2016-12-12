@@ -18,3 +18,16 @@ func TestExampleNewParser(t *testing.T) {
 
 	t.Log(p.Dump())
 }
+
+func TestExampleNewParserMituiPeople(t *testing.T) {
+	b := `Dec 08 19:16:43 iseb00240 docker[2592]: {"service_name":"mitui-people","hostname":"mitui-people-2404689131-tjatc","pid":22,"className":"renderMarkup","level":30,"message":"App context created with lang: en and time zone: America/Los_Angeles","timestamp":"2016-12-08T19:16:43.174Z","v":0}`
+	t.Log(b)
+	buff := []byte(b)
+
+	p := syslogmako.NewParser(buff)
+	if err := p.Parse(); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(p.Dump())
+}

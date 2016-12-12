@@ -3,8 +3,11 @@ package syslogmako
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"log"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bruceadowns/syslogparser"
@@ -120,6 +123,25 @@ func (p *Parser) parseHeader() (header, error) {
 	return hdr, nil
 }
 
+// global const in order to compile once
+var reVersionStrung = regexp.MustCompile("\"version\":\"[^\"]+\"")
+
+func preProcess(in string) io.Reader {
+	replacer := strings.NewReplacer(
+		"\"level\":10,", "\"level\":\"TRACE\",",
+		"\"level\":20,", "\"level\":\"DEBUG\",",
+		"\"level\":30,", "\"level\":\"INFO\",",
+		"\"level\":40,", "\"level\":\"WARN\",",
+		"\"level\":50,", "\"level\":\"ERROR\",",
+		"\"level\":60,", "\"level\":\"ERROR\",",
+		"\"@timestamp\"", "\"timestamp\"",
+		"\"@version\"", "\"version\"")
+
+	out := replacer.Replace(in)
+	out = reVersionStrung.ReplaceAllString(out, "\"version\":0")
+	return bytes.NewBufferString(out)
+}
+
 func (p *Parser) parseMessage() (rfc3164Message, error) {
 	msg := rfc3164Message{}
 	var err error
@@ -138,7 +160,7 @@ func (p *Parser) parseMessage() (rfc3164Message, error) {
 	msg.pid = pid
 	msg.content = content
 
-	if err := json.NewDecoder(bytes.NewBufferString(msg.content)).Decode(&msg.mako); err != nil {
+	if err := json.NewDecoder(preProcess(msg.content)).Decode(&msg.mako); err != nil {
 		return msg, err
 	}
 
