@@ -46,7 +46,7 @@ func NewParser(buff []byte, hostname net.Addr) *Parser {
 }
 
 // global const in order to compile once
-var reVersionStrung = regexp.MustCompile("\"version\":\"[0-9.]+\"")
+var reVersionStrung = regexp.MustCompile("\"version\":\"[^\"]+\"")
 
 func preProcess(in *bytes.Buffer) io.Reader {
 	replacer := strings.NewReplacer(

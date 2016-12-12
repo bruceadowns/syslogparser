@@ -125,3 +125,16 @@ func TestExampleNewParserMituiCloudalytics(t *testing.T) {
 
 	t.Log(p.Dump())
 }
+
+func TestExampleNewParserMituiChrome(t *testing.T) {
+	b := `{"service_environment":"ms-integ","service_pipeline":"main","service_version":"cc38c013c77bd7c12d0a62cee2efad564f27c467","k8s_pod_name":"mitui-chrome-green-3736722784-gb1xn","service_name":"mitui-chrome-green","hostname":"mitui-chrome-green-3736722784-gb1xn","pid":9,"className":"fetchConfig","version":"6.3.0-green","level":30,"message":"fetching config from https://35.161.165.102.jcxi.jivelandia.com/__services/v2/rest/mitui/config?path=%2F","timestamp":"2016-12-11T19:57:57.611Z","v":0}`
+	buff := []byte(b)
+
+	p := mako.NewParser(buff, &testAddr{addr: "foobar"})
+
+	if err := p.Parse(); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(p.Dump())
+}
