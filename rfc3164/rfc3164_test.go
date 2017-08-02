@@ -223,7 +223,7 @@ func (s *Rfc3164TestSuite) BenchmarkParseTag(c *C) {
 	p := NewParser(buff)
 
 	for i := 0; i < c.N; i++ {
-		_, _, err := p.parseApp()
+		_, _, err := p.parseTag()
 		if err != nil {
 			c.Fatal(err)
 		}
@@ -272,7 +272,7 @@ func (s *Rfc3164TestSuite) assertTimestamp(c *C, ts time.Time, b []byte, expC in
 
 func (s *Rfc3164TestSuite) assertTag(c *C, a, pi string, b []byte, expC int, e error) {
 	p := NewParser(b)
-	app, pid, err := p.parseApp()
+	app, pid, err := p.parseTag()
 	c.Assert(app, Equals, a)
 	c.Assert(pid, Equals, pi)
 	c.Assert(p.cursor, Equals, expC)
